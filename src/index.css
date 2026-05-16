@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+
+  --color-navy-black: #050816;
+  --color-midnight: #0B1023;
+  --color-charcoal: #111827;
+  
+  --color-electric: #4F46E5;
+  --color-neon: #8B5CF6;
+  --color-cyan-glow: #06B6D4;
+  --color-soft-magenta: #D946EF;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@layer base {
+  body {
+    @apply bg-navy-black text-slate-200 font-sans antialiased;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-white;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+  
+  .glass-nav {
+    @apply bg-navy-black/50 backdrop-blur-lg border-b border-white/5;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-electric via-neon to-cyan-glow;
+  }
+
+  .btn-primary {
+    @apply relative px-8 py-3 rounded-full font-medium transition-all duration-300 overflow-hidden;
+    @apply bg-gradient-to-r from-electric to-neon text-white;
+    @apply hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] hover:scale-105;
+  }
+
+  .btn-outline {
+    @apply px-8 py-3 rounded-full font-medium transition-all duration-300;
+    @apply border border-white/10 bg-white/5 text-white backdrop-blur-sm;
+    @apply hover:bg-white/10 hover:border-white/20;
+  }
+
+  .section-padding {
+    @apply py-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-navy-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20;
+}
