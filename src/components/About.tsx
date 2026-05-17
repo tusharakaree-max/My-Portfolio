@@ -22,14 +22,14 @@ export default function About() {
           <div className="absolute -inset-4 bg-gradient-to-r from-electric to-neon rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
           <div className="relative glass-card rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl border-white/10 group-hover:border-electric/30 transition-all duration-500">
             <img 
-              src="/src/assets/images/regenerated_image_1778985034025.png" 
+              src="/profile-photo.png" 
               alt="Tushar Akare - Portfolio Profile" 
               referrerPolicy="no-referrer"
               onError={(e) => {
                 const target = e.currentTarget;
                 if (!target.dataset.triedFallback) {
                   target.dataset.triedFallback = "true";
-                  target.src = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop";
+                  target.src = "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1974&auto=format&fit=crop";
                 }
               }}
               className="w-full h-full object-cover brightness-105 group-hover:scale-105 transition-all duration-700"
