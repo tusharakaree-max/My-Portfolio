@@ -1,4 +1,4 @@
-import { Github, Linkedin, Twitter, ArrowUp } from 'lucide-react';
+import { Github, Linkedin, Twitter, ArrowUp, BarChart3 } from 'lucide-react';
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -10,8 +10,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
         <div className="flex flex-col items-center md:items-start gap-4">
           <a href="#" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon flex items-center justify-center text-white font-bold text-xl">
-              T
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon flex items-center justify-center text-white">
+              <BarChart3 className="w-5 h-5" />
             </div>
             <span className="font-display font-bold text-xl tracking-tighter text-white">Tushar | Data Analyst</span>
           </a>
