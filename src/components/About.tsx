@@ -22,8 +22,8 @@ export default function About() {
           <div className="absolute -inset-4 bg-gradient-to-r from-electric to-neon rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
           <div className="relative glass-card rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl border-white/10 group-hover:border-electric/30 transition-all duration-500">
             <img 
-              src="/input_file_6.png" 
-              alt="Tushar Akaree - Portfolio Profile" 
+              src="/src/assets/images/regenerated_image_1778985034025.png" 
+              alt="Tushar Akare - Portfolio Profile" 
               referrerPolicy="no-referrer"
               onError={(e) => {
                 const target = e.currentTarget;
@@ -37,7 +37,7 @@ export default function About() {
             <div className="absolute inset-0 bg-gradient-to-t from-navy-black/40 via-transparent to-transparent opacity-60" />
             
             <div className="absolute bottom-6 left-6 right-6">
-              <h3 className="text-xl font-display font-bold text-white mb-1 tracking-tight">Tushar Akaree</h3>
+              <h3 className="text-xl font-display font-bold text-white mb-1 tracking-tight">Tushar Akare</h3>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-cyan-glow animate-pulse" />
                 <p className="text-slate-300 text-[10px] font-bold uppercase tracking-widest">Data Analyst</p>
