@@ -27,7 +27,30 @@ interface Certificate {
   isUserUploaded: boolean;
 }
 
-const DEFAULT_CERTIFICATES: Certificate[] = [];
+const DEFAULT_CERTIFICATES: Certificate[] = [
+  {
+    id: 'google-analytics',
+    title: 'Google Data Analytics Professional Certificate',
+    issuer: 'Google',
+    date: 'April 2026',
+    credentialId: 'GDA-CNTR4489BC',
+    skills: ['Data Cleaning', 'SQL', 'R Programming', 'Tableau', 'Data Analysis'],
+    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1000&auto=format&fit=crop',
+    verifyUrl: 'https://coursera.org/verify/google-data-analytics',
+    isUserUploaded: false
+  },
+  {
+    id: 'power-bi',
+    title: 'Microsoft Certified: Power BI Data Analyst Associate',
+    issuer: 'Microsoft',
+    date: 'May 2026',
+    credentialId: 'MS-PL300-9982',
+    skills: ['DAX', 'Data Modeling', 'Power Query', 'Dashboard Design', 'Row-Level Security'],
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop',
+    verifyUrl: 'https://learn.microsoft.com/credentials',
+    isUserUploaded: false
+  }
+];
 
 export default function Certificates() {
   const [certs, setCerts] = useState<Certificate[]>([]);
@@ -51,14 +74,14 @@ export default function Certificates() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Only keep user uploaded certificates
+        // Combine system defaults with user uploaded certificates
         const userCerts = parsed.filter((c: Certificate) => c.isUserUploaded);
-        setCerts(userCerts);
+        setCerts([...DEFAULT_CERTIFICATES, ...userCerts]);
       } catch (e) {
-        setCerts([]);
+        setCerts(DEFAULT_CERTIFICATES);
       }
     } else {
-      setCerts([]);
+      setCerts(DEFAULT_CERTIFICATES);
     }
   }, []);
 
@@ -66,7 +89,7 @@ export default function Certificates() {
     // Only save user uploaded ones to localStorage to keep sizes predictable
     const userUploadedOnly = updatedList.filter(c => c.isUserUploaded);
     localStorage.setItem('tushar_certificates', JSON.stringify(userUploadedOnly));
-    setCerts(updatedList);
+    setCerts([...DEFAULT_CERTIFICATES, ...userUploadedOnly]);
   };
 
   // Convert File to Base64
@@ -208,14 +231,16 @@ export default function Certificates() {
                 
                 {/* Top overlay buttons */}
                 <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
-                  <button 
-                    id={`delete-btn-${cert.id}`}
-                    onClick={(e) => handleDeleteCert(cert.id, e)}
-                    className="p-2 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500 hover:text-white text-red-100 hover:border-red-500 transition-all duration-300 pointer-events-auto backdrop-blur-md"
-                    title="Delete Certificate"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {cert.isUserUploaded && (
+                    <button 
+                      id={`delete-btn-${cert.id}`}
+                      onClick={(e) => handleDeleteCert(cert.id, e)}
+                      className="p-2 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500 hover:text-white text-red-100 hover:border-red-500 transition-all duration-300 pointer-events-auto backdrop-blur-md"
+                      title="Delete Certificate"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <div className="bg-navy-black/60 border border-white/10 backdrop-blur-md p-2 rounded-xl text-white group-hover:scale-110 transition-transform">
                     <Award className="w-5 h-5 text-neon" />
                   </div>
