@@ -27,30 +27,46 @@ interface Certificate {
   isUserUploaded: boolean;
 }
 
-const DEFAULT_CERTIFICATES: Certificate[] = [
-  {
-    id: 'google-analytics',
-    title: 'Google Data Analytics Professional Certificate',
-    issuer: 'Google',
-    date: 'April 2026',
-    credentialId: 'GDA-CNTR4489BC',
-    skills: ['Data Cleaning', 'SQL', 'R Programming', 'Tableau', 'Data Analysis'],
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1000&auto=format&fit=crop',
-    verifyUrl: 'https://coursera.org/verify/google-data-analytics',
-    isUserUploaded: false
-  },
-  {
-    id: 'power-bi',
-    title: 'Microsoft Certified: Power BI Data Analyst Associate',
-    issuer: 'Microsoft',
-    date: 'May 2026',
-    credentialId: 'MS-PL300-9982',
-    skills: ['DAX', 'Data Modeling', 'Power Query', 'Dashboard Design', 'Row-Level Security'],
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop',
-    verifyUrl: 'https://learn.microsoft.com/credentials',
-    isUserUploaded: false
-  }
-];
+const DEFAULT_CERTIFICATES: Certificate[] = [];
+
+// Helper function to compress images using Canvas to fit into LocalStorage quota
+const compressImage = (base64Str: string, maxWidth = 1000, maxHeight = 700): Promise<string> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+
+      // Maintain aspect ratio
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        // Compress as JPEG with 0.7 quality to significantly reduce file size
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(compressedDataUrl);
+      } else {
+        resolve(base64Str);
+      }
+    };
+    img.onerror = () => {
+      resolve(base64Str);
+    };
+  });
+};
 
 export default function Certificates() {
   const [certs, setCerts] = useState<Certificate[]>([]);
@@ -66,6 +82,7 @@ export default function Certificates() {
   const [newVerifyUrl, setNewVerifyUrl] = useState('');
   const [newImage, setNewImage] = useState<string>('');
   const [dragActive, setDragActive] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load from LocalStorage
@@ -76,29 +93,45 @@ export default function Certificates() {
         const parsed = JSON.parse(saved);
         // Combine system defaults with user uploaded certificates
         const userCerts = parsed.filter((c: Certificate) => c.isUserUploaded);
-        setCerts([...DEFAULT_CERTIFICATES, ...userCerts]);
+        setCerts(userCerts);
       } catch (e) {
-        setCerts(DEFAULT_CERTIFICATES);
+        setCerts([]);
       }
     } else {
-      setCerts(DEFAULT_CERTIFICATES);
+      setCerts([]);
     }
   }, []);
 
   const saveCerts = (updatedList: Certificate[]) => {
     // Only save user uploaded ones to localStorage to keep sizes predictable
     const userUploadedOnly = updatedList.filter(c => c.isUserUploaded);
-    localStorage.setItem('tushar_certificates', JSON.stringify(userUploadedOnly));
-    setCerts([...DEFAULT_CERTIFICATES, ...userUploadedOnly]);
+    try {
+      localStorage.setItem('tushar_certificates', JSON.stringify(userUploadedOnly));
+      setCerts(userUploadedOnly);
+    } catch (e) {
+      console.error("Local storage quota exceeded. Unable to save certificate.", e);
+      alert("Uh oh! Browser's local storage quota is full. Try uploading a different or smaller photo.");
+      setCerts(userUploadedOnly);
+    }
   };
 
-  // Convert File to Base64
+  // Convert File to Base64 and compress it
   const handleFile = (file: File) => {
     if (file && file.type.startsWith('image/')) {
+      setIsCompressing(true);
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         if (e.target?.result) {
-          setNewImage(e.target.result as string);
+          try {
+            const originalBase64 = e.target.result as string;
+            const compressed = await compressImage(originalBase64);
+            setNewImage(compressed);
+          } catch (err) {
+            console.error("Error compressing image:", err);
+            setNewImage(e.target.result as string);
+          } finally {
+            setIsCompressing(false);
+          }
         }
       };
       reader.readAsDataURL(file);
@@ -470,7 +503,15 @@ export default function Certificates() {
                       className="hidden"
                     />
 
-                    {newImage ? (
+                    {isCompressing ? (
+                      <div className="space-y-2 py-4">
+                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto animate-spin">
+                          <Compass className="w-5 h-5 text-cyan-glow" />
+                        </div>
+                        <p className="text-sm text-cyan-glow font-medium">Processing & compressing image...</p>
+                        <p className="text-[10px] text-slate-500">Optimizing file size for web compatibility</p>
+                      </div>
+                    ) : newImage ? (
                       <div className="space-y-3">
                         <div className="relative mx-auto w-32 aspect-[16/10] rounded-lg overflow-hidden border border-white/10">
                           <img src={newImage} alt="Uploaded preview" className="w-full h-full object-cover" />
